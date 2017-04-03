@@ -22,51 +22,44 @@
   <div id="image-container">
     <canvas width="500" height="500"></canvas>
     <div>
-      <span>Top Line:</span><br/>
-      <input id="topLineText" type="text"><br/>
-      <span>Bottom Line:</span><br/>
-      <input id="bottomLineText" type="text"><br/>
+      <span>Text on the  bottom of image:</span><br/>
+      <textarea id="bottomLineText" rows="20" cols="50"></textarea><br/>
       <button id="saveBtn">Save</button>
     </div>
   </div>
+
   <script>
     function textChangeListener (evt) {
       var id = evt.target.id;
       var text = evt.target.value;
-      
-      if (id == "topLineText") {
-        window.topLineText = text;
+      var textArray = text.split("\n");
+
+      if (window.countNewLine == 0) {
+          window.bottomLineText = text;
       } else {
-        window.bottomLineText = text;
+          window.bottomLineText = textArray[newLineCount];
       }
       
-      redrawMeme(window.imageSrc, window.topLineText, window.bottomLineText);
+      redrawMeme(window.imageSrc, window.bottomLineText);
     }
     
-    function redrawMeme(image, topLine, bottomLine) {
+
+
+    function redrawMeme(image, bottomLine) {
       // Get Canvas2DContext
       var canvas = document.querySelector('canvas');
       var ctx = canvas.getContext("2d");
-      if (image != null)
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      if (image != null) ctx.drawImage(image, 0, 0, canvas.width, canvas.height/2);
       // Your code here
-      ctx.font = '30pt Impact';
-      ctx.textAlign = 'center';
-      ctx.strokeStyle = 'black';
-      ctx.lineWidth = 3;
-      ctx.fillStyle = 'white';
-      
-      if (topLine != null) {
-        ctx.fillText(topLine, canvas.width / 2, 40);
-        ctx.strokeText(topLine, canvas.width / 2, 40);
-      }
+      ctx.font = '18pt Impact';
       
       if (bottomLine != null) {
-        ctx.fillText(bottomLine, canvas.width / 2, canvas.height - 20);
-        ctx.strokeText(bottomLine, canvas.width / 2, canvas.height - 20);
+        ctx.fillText(bottomLine, 0, canvas.height/2 +25+newLine);
       }
     }
     
+
+
     function saveFile() {
       window.open(document.querySelector('canvas').toDataURL());
     }
@@ -88,7 +81,7 @@
         image.onload = function() {
           
           window.imageSrc = this;
-          redrawMeme(window.imageSrc, null, null);
+          redrawMeme(window.imageSrc, null);
         }
         
         // Set image data to background image.
@@ -98,12 +91,20 @@
       reader.readAsDataURL(file)
     }
     
-    window.topLineText = "";
+
+
     window.bottomLineText = "";
-    var input1 = document.getElementById('topLineText');
+    window.newLineCount = 0;
+    window.newLine = 0;
     var input2 = document.getElementById('bottomLineText');
-    input1.oninput = textChangeListener;
     input2.oninput = textChangeListener;
+    document.getElementById('bottomLineText').addEventListener('keyup', function(e) {
+        if (e.keyCode == 13) {
+            window.newLine += 20;
+            window.newLineCount++;
+            textChangeListener;
+        }
+    })
     document.getElementById('file').addEventListener('change', handleFileSelect, false);
     document.querySelector('button').addEventListener('click', saveFile, false);
   </script>
