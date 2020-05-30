@@ -1,0 +1,9 @@
+body {
+    font-family: 'Slabo 27px', serif;
+    position: relative;
+}
+
+img {
+    display:block;
+    margin:auto;
+}
